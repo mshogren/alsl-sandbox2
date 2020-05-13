@@ -11,9 +11,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     strategy:
       matrix:
         node-version: [10.x, 12.x]
@@ -52,8 +49,23 @@ jobs:
 
       - name: Publish code coverage
         if: ${{ matrix.node-version == '12.x' }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: npx codecov
 
+  release:
+    if: ${{ github.event_name == 'push'}}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
       - name: Create release
-        if: ${{ github.event_name == 'push' && matrix.node-version == '12.x' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
