@@ -11,16 +11,49 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     strategy:
       matrix:
         node-version: [10.x, 12.x]
 
     steps:
       - uses: actions/checkout@v2
-      - name: Build using Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        with:
+          fetch-depth: 0
+
+      - uses: wagoid/commitlint-github-action@v1
+
+      - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test -- --coverage
+
+      - name: Publish code coverage
+        if: ${{ matrix.node-version == '12.x' }}
+      - run: npx codecov
+
+      - name: Create release
+        if: ${{ github.event_name == 'push' && matrix.node-version == '12.x' }}
+        run: npx semantic-release
