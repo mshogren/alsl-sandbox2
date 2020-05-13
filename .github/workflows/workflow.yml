@@ -52,7 +52,7 @@ jobs:
 
       - name: Publish code coverage
         if: ${{ matrix.node-version == '12.x' }}
-      - run: npx codecov
+        run: npx codecov
 
       - name: Create release
         if: ${{ github.event_name == 'push' && matrix.node-version == '12.x' }}
