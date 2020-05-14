@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   useAuth,
   useFirebaseApp,
@@ -9,9 +9,17 @@ import {
   AuthCheck,
 } from 'reactfire';
 import { StyledFirebaseAuth } from 'react-firebaseui';
-import { Spinner } from 'reactstrap';
-import logo from './logo.svg';
-import './App.css';
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+  Spinner,
+} from 'reactstrap';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 
 const preloadSDKs = (firebaseApp) => {
   return Promise.all([
@@ -62,29 +70,64 @@ function LoginPage() {
   return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth()} />;
 }
 
+function Home() {
+  return <p>Home</p>;
+}
+
+function Products() {
+  return <p>Products</p>;
+}
+
+function Taxes() {
+  return <p>Taxes</p>;
+}
+
 function App() {
   const firebaseApp = useFirebaseApp();
   preloadSDKs(firebaseApp).then(preloadData(firebaseApp));
 
+  const [collapsed, setCollapsed] = useState(true);
+  const toggleNavbar = () => setCollapsed(!collapsed);
+
   return (
     <SuspenseWithPerf fallback={<LoadingPage />}>
       <AuthCheck fallback={<LoginPage />}>
-        <div className="App">
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-              Edit <code>src/App.js</code> and save to reload.
-            </p>
-            <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React
-            </a>
-          </header>
-        </div>
+        <Router>
+          <div>
+            <Navbar color="faded" light expand="md">
+              <NavbarBrand tag={Link} to="/" className="mr-auto">
+                Home
+              </NavbarBrand>
+              <NavbarToggler onClick={toggleNavbar} className="mr-2" />
+              <Collapse isOpen={!collapsed} navbar>
+                <Nav navbar>
+                  <NavItem>
+                    <NavLink tag={Link} to="/products">
+                      Products
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink tag={Link} to="/taxes">
+                      Taxes
+                    </NavLink>
+                  </NavItem>
+                </Nav>
+              </Collapse>
+            </Navbar>
+
+            <Switch>
+              <Route path="/products">
+                <Products />
+              </Route>
+              <Route path="/taxes">
+                <Taxes />
+              </Route>
+              <Route path="/">
+                <Home />
+              </Route>
+            </Switch>
+          </div>
+        </Router>
       </AuthCheck>
     </SuspenseWithPerf>
   );
