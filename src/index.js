@@ -1,12 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { FirebaseAppProvider } from 'reactfire';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import 'firebase/performance';
+
+const config = {
+  apiKey: 'AIzaSyCmh9-qBBAR-4gkoCZdTm0Gh6zdITsJSjc',
+  authDomain: 'alsl-sandbox2.firebaseapp.com',
+  databaseURL: 'https://alsl-sandbox2.firebaseio.com',
+  projectId: 'alsl-sandbox2',
+  storageBucket: 'alsl-sandbox2.appspot.com',
+  messagingSenderId: '587779077455',
+  appId: '1:587779077455:web:4ebee4ec3576a2c7dbc13a',
+};
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <FirebaseAppProvider firebaseConfig={config}>
+      <App />
+    </FirebaseAppProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
