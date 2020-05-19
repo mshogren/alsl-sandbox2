@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { FirebaseAppProvider } from 'reactfire';
+import { SuspenseWithPerf, FirebaseAppProvider } from 'reactfire';
+import LoadingPage from './LoadingPage';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'firebase/performance';
@@ -20,7 +21,9 @@ const config = {
 ReactDOM.render(
   <React.StrictMode>
     <FirebaseAppProvider firebaseConfig={config}>
-      <App />
+      <SuspenseWithPerf fallback={<LoadingPage />}>
+        <App />
+      </SuspenseWithPerf>
     </FirebaseAppProvider>
   </React.StrictMode>,
   document.getElementById('root')
