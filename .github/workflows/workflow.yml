@@ -21,6 +21,8 @@ jobs:
           fetch-depth: 0
 
       - uses: wagoid/commitlint-github-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v1
         with:
