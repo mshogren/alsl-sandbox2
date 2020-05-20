@@ -3,16 +3,8 @@ import { cleanup, render, wait } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import '@ungap/global-this';
 import { FirebaseAppProvider } from 'reactfire';
+import * as preload from './preload';
 import App from './App';
-
-jest.mock('reactfire', () => {
-  return {
-    ...jest.requireActual('reactfire'),
-    preloadFirestore: jest.fn(),
-    preloadAuth: jest.fn(),
-    preloadUser: jest.fn(),
-  };
-});
 
 jest.mock('./LoginPage', () => {
   return {
@@ -85,7 +77,11 @@ afterEach(() => {
 });
 
 test('preloads firebase SDKs and data', () => {
+  preload.preloadSDKs = jest.fn(() => Promise.resolve());
+  preload.preloadData = jest.fn();
   App();
+  expect(preload.preloadSDKs).toHaveBeenCalled();
+  expect(preload.preloadData).toHaveBeenCalled();
 });
 
 test('renders login page', async () => {
