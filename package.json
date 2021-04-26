@@ -21,7 +21,7 @@
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-prettier": "^6.11.0",
     "firebase": "^7.14.3",
-    "husky": "^4.2.5",
+    "husky": "^6.0.0",
     "lint-staged": "^10.2.2",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
